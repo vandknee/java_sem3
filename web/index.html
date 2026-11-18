@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RiverTrace · Monitoring workspace</title>
+<link rel="stylesheet" href="/style.css">
+<script src="/app.js" defer></script>
+</head>
+<body>
+<aside class="sidebar">
+<a class="brand" href="/">RiverTrace<span>RIVER MONITORING WORKSPACE</span></a>
+<div class="workspace">Ganga basin<small>CPCB 2022–2023 Dataset</small></div>
+<p class="nav_label">WORKSPACE</p>
+<nav aria-label="Main navigation">
+<button data-view="overview" class="active" aria-current="page"><span>01</span> Overview</button>
+<button data-view="stations"><span>02</span> Stations</button>
+<button data-view="events"><span>03</span> Pollution & analysis</button>
+<button data-view="history"><span>04</span> Reading history</button>
+<button data-view="river_explorer"><span>05</span> River Explorer</button>
+</nav>
+<div class="sidebar_bottom"><span class="small_badge">CPCB 2022–2023</span><p>Water quality records.</p><small>Genuine CPCB NWQMP monitoring records and HydroRIVERS topology.</small></div>
+</aside>
+<div class="app">
+<header><div class="breadcrumb">Workspace <span>/</span> <b id="breadcrumb">Overview</b></div><div class="header_actions"><span class="quiet">Ganga basin · CPCB 2022–2023</span><button id="refresh" class="button ghost">Refresh</button><button class="button primary" data-add>+ Add reading</button></div></header>
+<main>
+<div class="page_heading"><div><p class="eyebrow">RIVER MONITORING & ANALYSIS</p><h1 id="page_title">A closer look at your rivers.</h1><p id="page_description">Review conditions, investigate events and keep your records up to date.</p></div><span id="view_badge" class="pill">Latest available records</span></div>
+<div id="message" role="status" aria-live="polite" hidden></div>
+<section class="filter_bar" aria-label="Workspace filters"><label>Focus station<select id="station" aria-label="Focus station"></select></label><label>Parameter<select id="pollutant"><option value="BOD">BOD (Biochemical Oxygen Demand)</option><option value="DO">DO (Dissolved Oxygen)</option><option value="PH">pH (Acidity/Alkalinity)</option><option value="FC">FC (Faecal Coliform)</option></select></label><div class="divider"></div><label>Historical cutoff<input id="until" type="text" placeholder="e.g. 2022, 2023, or date"></label><button id="apply_time" class="button ghost">Apply</button><button id="latest" class="text_button">Return to latest</button></section>
+<div class="stats"><div><span>Stations monitored</span><strong id="station_count">—</strong><small>Connected CPCB locations</small></div><div><span>Above threshold</span><strong id="abnormal">—</strong><small>Evaluated reporting period</small></div><div><span>Recorded events</span><strong id="event_count">—</strong><small>Threshold exceedances</small></div><div><span>Active threshold</span><strong id="limit">—</strong><small id="threshold_rule">CPCB standard</small></div></div>
+<div id="content_layout" class="content_layout">
+<div class="main_content">
+<section id="overview" class="view">
+<div class="panel"><div class="panel_heading"><div><p class="eyebrow">WHERE TO LOOK FIRST</p><h2>Stations needing attention</h2></div><button class="text_button" data-view="stations">All stations →</button></div><p class="hint">Select a station to inspect its latest readings and connected regions.</p><div id="attention" class="station_cards"></div></div>
+<div class="panel"><div class="panel_heading"><div><p class="eyebrow">INVESTIGATION DESK</p><h2>Highest-priority events</h2></div><button class="text_button" data-view="events">View all →</button></div><div id="overview_events"></div></div>
+<div class="tip"><b>Try an investigation</b><p>Select Kanpur upstream (1067) or Prayagraj - Sangam (1049), open River Explorer, and compare the Java BFS and DFS traversal orders. Then inspect an event to see only the evidence available at that time.</p><button class="text_button" id="try_trace">Try Kanpur upstream →</button></div>
+</section>
+<section id="stations" class="view" hidden>
+<div class="panel"><div class="panel_heading"><div><p class="eyebrow">STATION DIRECTORY</p><h2>Find a monitoring station</h2></div><span id="station_matches" class="quiet"></span></div><div class="table_filters"><label class="grow">Search<input id="station_search" type="search" placeholder="Station, ID or region"></label><label>Region<select id="region"><option value="">All regions</option></select></label><label>Status<select id="station_status"><option value="">All statuses</option><option value="abnormal">Exceeds threshold</option><option>NORMAL</option><option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option><option value="none">No data</option></select></label><label>Sort by<select id="station_sort"><option value="name">Name</option><option value="risk">Highest value/risk</option><option value="date">Reporting period</option></select></label></div><div class="table_wrap"><table><thead><tr><th>Station</th><th id="th_station_value">Value / Range</th><th>Status</th><th>Period / Date</th><th></th></tr></thead><tbody id="station_rows"></tbody></table></div></div>
+</section>
+<section id="events" class="view" hidden>
+<div class="panel"><div class="panel_heading"><div><p class="eyebrow">POLLUTION EVENTS</p><h2>Turn a reading into an investigation</h2></div><span id="event_matches" class="quiet"></span></div><div class="table_filters"><label>Scope<select id="event_scope"><option value="all">All stations</option><option value="focus">Focus station</option></select></label><label>Severity<select id="event_severity"><option value="">All severities</option><option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></label><label>Order<select id="event_sort"><option value="severity">Highest severity</option><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label></div><p class="hint">Inspect opens the station at the event time. Historical events remain after recovery.</p><div id="event_rows" class="bounded"></div></div>
+<div class="panel"><div class="panel_heading"><div><p class="eyebrow">REPEATED EXCEEDANCES</p><h2>Recurring pollution</h2></div><span class="pill subtle">Reporting periods</span></div><p class="hint">Stations exceeding the threshold across at least 2 reporting periods or dates.</p><div id="recurring"></div></div>
+<div class="panel"><div class="panel_heading"><div><p class="eyebrow">PRIORITY REVIEW</p><h2>Critical network locations</h2></div></div><p class="hint">Highest upstream/local severity ratio × node weight. Orders stations and confluences by potential cumulative impact.</p><div id="critical" class="bounded"></div></div>
+</section>
+<section id="history" class="view" hidden>
+<div class="panel"><div class="panel_heading"><div><p class="eyebrow">SAVED MEASUREMENTS</p><h2 id="history_title">Reading history</h2></div><button id="export" class="button ghost">Export CSV</button></div><div class="replay_controls"><div><b>Review period by period</b><small id="replay_label">Latest view</small></div><button id="previous" class="button ghost">← Previous</button><button id="next" class="button ghost">Next →</button></div><div class="table_filters"><label>Search period<input id="history_search" type="text" placeholder="Year or date"></label><label>Status<select id="history_status"><option value="">All statuses</option><option>NORMAL</option><option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></label><button id="clear_history" class="text_button">Clear filters</button></div><p class="hint">Edit or delete a saved record below. Export includes only the rows shown.</p><div class="table_wrap"><table><thead><tr><th>Period / Date</th><th id="th_history_value">Measurement / Range</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody id="history_rows"></tbody></table></div><p id="history_count" class="hint"></p></div>
+</section>
+
+<section id="river_explorer" class="view" hidden>
+<div class="river_explorer_layout">
+<article class="panel river_map_panel">
+<div class="panel_heading"><div><p class="eyebrow">HYDRORIVERS NETWORK</p><h2>Ganga river network</h2><p class="hint map_subtitle">Original river reach geometry · monitoring stations mapped to their corresponding segments</p></div><div class="map_view_controls"><button id="zoom_out" class="button ghost" aria-label="Zoom out">−</button><button id="zoom_in" class="button ghost" aria-label="Zoom in">+</button><button id="reset_view" class="button ghost">Reset view</button></div></div>
+<div class="map_box"><svg id="river_map" role="group" aria-label="Interactive HydroRIVERS network with monitoring stations" viewBox="0 0 900 550"></svg><div class="map_legend"><span><i class="legend_dot normal_dot"></i>Normal station</span><span><i class="legend_dot flagged_dot"></i>Flagged station</span><span><i class="legend_dot missing_dot"></i>No data</span><span><i class="legend_line visited_line"></i>Visited segment</span><span><i class="legend_line route_line"></i>Selected route</span></div></div>
+<p class="map_note">Station positions use the project's approximate locality-to-reach mapping, not surveyed coordinates. River lines use the supplied HydroRIVERS geometry. Pan by dragging and zoom with the wheel or controls.</p>
+</article>
+<aside class="panel explorer_controls">
+<div class="panel_heading"><div><p class="eyebrow">NETWORK TRACING</p><h2>Trace a connection</h2></div></div>
+<label>Start station<select id="explorer_start"></select></label>
+<div class="explorer_form_row"><label>Direction<select id="explorer_direction"><option value="upstream">Upstream</option><option value="downstream">Downstream</option></select></label><label>Algorithm<select id="explorer_algorithm"><option value="BFS">BFS</option><option value="DFS">DFS</option></select></label></div>
+<button id="trace_river" class="button primary full">Trace river →</button>
+<div class="playback_controls"><button id="play_trace" class="button ghost" disabled>Play</button><button id="trace_step" class="button ghost" disabled>Show next step</button><button id="trace_all" class="text_button" disabled>Show all</button><button id="reset_trace" class="text_button" disabled>Reset trace</button></div>
+<p id="trace_progress_label" class="quiet">Run a trace to inspect the returned traversal.</p>
+<div class="explorer_divider"></div>
+<label>Destination station<select id="explorer_destination"></select></label>
+<button id="find_route" class="button ghost full">Find route</button>
+<div id="explorer_results" class="explorer_results" aria-live="polite"><div class="empty">Choose a starting station, direction and algorithm, then select Trace river.</div></div>
+</aside>
+</div>
+</section>
+</div>
+<aside class="detail_panel" id="focus_panel"><div class="detail_header"><span class="eyebrow">FOCUS STATION</span><span id="focus_id" class="quiet">—</span></div><h2 id="focus_name">Loading…</h2><p id="focus_region" class="quiet"></p><div id="focus_status"></div><div id="metrics" class="metric_list"></div><p id="focus_sample" class="hint"></p><button id="open_trace" class="button primary full">Trace connections</button><button class="button ghost full" data-view="history">View reading history</button><button class="text_button full" data-add>+ Record a sample here</button><div class="detail_note"><b>What does this tell me?</b><p id="focus_explanation">Select a station to review available evidence.</p></div></aside>
+</div>
+<footer><span>RiverTrace · Java OOP project</span><span>Central Pollution Control Board (CPCB) NWQMP 2022–2023 dataset · HydroRIVERS network</span></footer>
+</main>
+</div>
+<dialog id="reading_dialog"><div class="dialog_heading"><div><p class="eyebrow">READING REGISTER</p><h2 id="reading_title">Add a reading</h2></div><button class="close_button" data-close="reading_dialog" aria-label="Close reading form">×</button></div><form id="reading_form"><label>Station<select id="new_station" name="station"></select></label><div class="form_row"><label>Parameter<select id="new_pollutant" name="pollutant"><option value="BOD">BOD (mg/L)</option><option value="DO">DO (mg/L)</option><option value="PH">pH</option><option value="FC">FC (MPN/100 mL)</option></select></label><label id="new_value_label">Value<input id="new_value" name="value" type="number" min="0" step="any" required placeholder="e.g. 4.5"></label></div><label>Sample date and time<input id="new_time" name="time" type="datetime-local" step="1" required></label><p class="hint">Values must be finite and non-negative. A station cannot have duplicate readings for the same parameter and period.</p><p id="form_message" class="form_error" role="alert"></p><div class="dialog_footer"><button type="button" class="button ghost" data-close="reading_dialog">Cancel</button><button type="submit" class="button primary" id="save_reading">Save reading</button></div></form></dialog>
+<dialog id="delete_dialog"><div class="dialog_heading"><h2>Delete this reading?</h2><button class="close_button" data-close="delete_dialog" aria-label="Cancel deletion">×</button></div><p id="delete_summary"></p><p class="hint">This removes the record from the CSV file and recalculates its events and analysis. This cannot be undone here.</p><p id="delete_message" class="form_error" role="alert"></p><div class="dialog_footer"><button class="button ghost" data-close="delete_dialog">Keep reading</button><button id="confirm_delete" class="button danger">Delete reading</button></div></dialog>
+</body>
+</html>

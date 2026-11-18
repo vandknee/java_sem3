@@ -1,0 +1,30 @@
+id,type,name,region
+1491,station,Gangotri,Uttarakhand
+5451,station,Kedarnath,Uttarakhand
+5452,station,Badrinath,Uttarakhand
+1489,station,Devprayag after confluence,Uttarakhand
+1060,station,Rishikesh - Laxman Jhula,Uttarakhand
+1061,station,Haridwar - Ajeetpur,Uttarakhand
+1067,station,Kanpur upstream - Shuklaganj,Uttar Pradesh
+10157,station,Kanpur - Jajmau Bridge,Uttar Pradesh
+1046,station,Prayagraj - Rasoolabad,Uttar Pradesh
+1049,station,Prayagraj - Sangam,Uttar Pradesh
+2486,station,Mirzapur downstream,Uttar Pradesh
+1070,station,Varanasi upstream - Vishwasundari Bridge,Uttar Pradesh
+1071,station,Varanasi downstream - after Varuna,Uttar Pradesh
+2283,station,Hamirpur,Uttar Pradesh
+1069,station,Prayagraj - Balua Ghat,Uttar Pradesh
+1356,station,Hamirpur - Betwa before confluence,Uttar Pradesh
+1353,station,Jaunpur downstream,Uttar Pradesh
+10152,station,Bhusaula - after Gomti confluence,Uttar Pradesh
+C01,confluence,Devprayag confluence,Uttarakhand
+C02,confluence,Hamirpur Betwa confluence,Uttar Pradesh
+C03,confluence,Prayagraj Sangam confluence,Uttar Pradesh
+C04,confluence,Gomti confluence,Uttar Pradesh
+T01,tributary,Bhagirathi headwaters,Uttarakhand
+T02,tributary,Mandakini headwaters,Uttarakhand
+T03,tributary,Alaknanda headwaters,Uttarakhand
+T04,tributary,Yamuna headwaters,Uttar Pradesh
+T05,tributary,Betwa headwaters,Uttar Pradesh
+T06,tributary,Gomti headwaters,Uttar Pradesh
+R01,reservoir,Tehri reservoir,Uttarakhand
